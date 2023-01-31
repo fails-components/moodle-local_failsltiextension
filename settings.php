@@ -29,6 +29,26 @@ if ($hassiteconfig) {
         get_string('pluginname', 'local_failsltiextension'),
         'moodle/site:config'
     );
+
+    $settings->add(
+        new admin_setting_heading(
+            'links',
+            "Links",
+            get_string(
+                'api_test:link',
+                'local_failsltiextension',
+                ['link' => (string) new moodle_url('/local/failsltiextension/api_test.php')]
+            )
+        )
+    );
+
+    $settings->add(
+        new admin_setting_heading(
+            'settings',
+            get_string('settings_heading', 'local_failsltiextension'),
+            ''
+        )
+    );
     $settings->add(
         new admin_setting_configtext(
             'failsltiextension/api_url',
@@ -38,5 +58,6 @@ if ($hassiteconfig) {
             PARAM_URL
         )
     );
+
     $ADMIN->add('localplugins', $settings);
 }

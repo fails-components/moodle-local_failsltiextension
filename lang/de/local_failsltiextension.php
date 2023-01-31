@@ -29,4 +29,12 @@ $string['pluginname'] = 'FAILS LTI Extension';
 $string['api_request_exception'] = 'Server antwortete mit Statuscode {$a}';
 
 // Settings:
+$string['settings_heading'] = 'Einstellungen';
 $string['settings_api_url'] = 'API Basis-URL';
+
+// API test page:
+$string['api_test:link'] = 'Das <a href="{$a->link}">API Testskript</a> hilft dabei, sicherzustellen, dass die API erreichbar ist und erwratungsgemäß antwortet.';
+$string['api_test:title'] = 'FAILS API Testseite';
+$string['api_test:success'] = 'API test war erfolgreich';
+$string['api_test:unexpected'] = 'Unerwarteter API Antworttext';
+$string['api_test:error'] = 'API Antwort Status {$a}';

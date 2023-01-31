@@ -39,7 +39,7 @@ class api_request_exception extends \moodle_exception {
 /**
  * Class api.
  *
- * Serves as a wrapper for FAILS API.
+ * Serves as a wrapper for the FAILS API.
  *
  * @package local_failsltiextension
  */
@@ -52,9 +52,12 @@ class api {
     /**
      * Removes trailing slashes from the base URL.
      *
-     * @param string $base_url
+     * @param ?string $base_url If `null` (default), the config value `api_url` is used
      */
-    public function __construct(string $base_url) {
+    public function __construct(?string $base_url = null) {
+        if (is_null($base_url)) {
+            $base_url = get_config('failsltiextension', 'api_url');
+        }
         $this->base_url = preg_replace('|/+$|i', '', $base_url);
     }
 
@@ -68,9 +71,9 @@ class api {
      */
     public function get_jwt(array $payload = [], string $algorithm = 'RS256') : string {
         global $CFG;
+        list('key'=>$key, 'kid'=>$kid) = jwks_helper::get_private_key();
         $payload['iss'] = $payload['iss'] ?? $CFG->wwwroot;
         $payload['exp'] = $payload['exp'] ?? time() + 60;
-        list('key'=>$key, 'kid'=>$kid) = jwks_helper::get_private_key();
         $payload['kid'] = $kid;
         return JWT::encode($payload, $key, $algorithm, $kid);
     }
@@ -83,8 +86,7 @@ class api {
      * @param bool $auth whether to add a JWT for authentication to the headers
      * @param array $payload request body (to be encoded as JSON)
      * @param array $headers additional HTTP headers to include
-     * @return string
-     * @throws api_request_exception with the HTTP status code if it is not 200
+     * @return array two elements: the status code and the response body
      */
     public function request(
         string $method,
@@ -92,7 +94,7 @@ class api {
         bool $auth = true,
         array $payload = [],
         array $headers = []
-    ) {
+    ) : array {
         $url = $this->base_url . $path;
         if ($auth) {
             $headers[] = "Authorization: Bearer " . $this->get_jwt();
@@ -109,11 +111,8 @@ class api {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($status != 200) {
-            throw new api_request_exception($status);
-        }
         curl_close($ch);
-        return $output;
+        return [$status, $output];
     }
 
     /**
@@ -123,15 +122,14 @@ class api {
      * @param bool $auth whether to add a JWT for authentication to the headers
      * @param array $payload request body (to be encoded as JSON)
      * @param array $headers additional HTTP headers to include
-     * @return string
-     * @throws api_request_exception with the HTTP status code if it is not 200
+     * @return array two elements: the status code and the response body
      */
     public function get(
         string $path,
         bool $auth = true,
         array $payload = [],
         array $headers = []
-    ) {
+    ) : array {
         return $this->request('GET', $path, $auth, $payload, $headers);
     }
 
@@ -142,35 +140,15 @@ class api {
      * @param bool $auth whether to add a JWT for authentication to the headers
      * @param array $payload request body (to be encoded as JSON)
      * @param array $headers additional HTTP headers to include
-     * @return string
-     * @throws api_request_exception with the HTTP status code if it is not 200
+     * @return array two elements: the status code and the response body
      */
     public function delete(
         string $path,
         bool $auth = true,
         array $payload = [],
         array $headers = []
-    ) {
+    ) : array {
         return $this->request('DELETE', $path, $auth, $payload, $headers);
-    }
-
-    /**
-     * Convenience method for a PATCH request.
-     *
-     * @param string $path URL path to append to the base URL
-     * @param bool $auth whether to add a JWT for authentication to the headers
-     * @param array $payload request body (to be encoded as JSON)
-     * @param array $headers additional HTTP headers to include
-     * @return string
-     * @throws api_request_exception with the HTTP status code if it is not 200
-     */
-    public function patch(
-        string $path,
-        bool $auth = true,
-        array $payload = [],
-        array $headers = []
-    ) {
-        return $this->request('PATCH', $path, $auth, $payload, $headers);
     }
 
     /**
@@ -190,7 +168,11 @@ class api {
         if (!is_null($email)) {
             $payload['email'] = $email;
         }
-        return json_decode($this->get($path, true, $payload), true);
+        list($status, $data) = $this->get($path, true, $payload);
+        if ($status != 200) {
+            throw new api_request_exception($status);
+        }
+        return json_decode($data, true);
     }
 
     /**
@@ -203,7 +185,11 @@ class api {
     public function delete_user(string $uuid) : array {
         $path = '/lti/maintenance/user/';
         $payload = ['uuid' => $uuid];
-        return json_decode($this->delete($path, true, $payload), true);
+        list($status, $data) = $this->delete($path, true, $payload);
+        if ($status != 200) {
+            throw new api_request_exception($status);
+        }
+        return json_decode($data, true);
     }
 
     /**
@@ -216,19 +202,10 @@ class api {
     public function delete_course(int $courseid) : array {
         $path = '/lti/maintenance/course/';
         $payload = ['courseid' => $courseid];
-        return json_decode($this->delete($path, true, $payload), true);
-    }
-
-    /**
-     * Requests restoration of a course at the FAILS backend.
-     *
-     * @param int $courseid the id of the course to be restored
-     * @return array with the key `modifieddocs`
-     * @throws api_request_exception with the HTTP status code if it is not 200
-     */
-    public function restore_course(int $courseid) : array {
-        $path = '/lti/maintenance/course/';
-        $payload = ['courseid' => $courseid];
-        return json_decode($this->patch($path, true, $payload), true);
+        list($status, $data) = $this->delete($path, true, $payload);
+        if ($status != 200) {
+            throw new api_request_exception($status);
+        }
+        return json_decode($data, true);
     }
 }
