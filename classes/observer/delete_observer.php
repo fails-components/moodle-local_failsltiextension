@@ -15,17 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Communication with the FAILS Server API
- *
  * @package   local_failsltiextension
  * @copyright 2023 Daniil Fajnberg, innoCampus, TU Berlin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+namespace local_failsltiextension\observer;
+
+use core\event\course_deleted;
+use core\event\user_deleted;
+
+use local_failsltiextension\task;
+
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023020200;
-$plugin->requires  = 2019111800;
-$plugin->component = 'local_failsltiextension';
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.1.0';
+
+class delete_observer {
+    public static function course_deleted(course_deleted $event) {
+        $taskdelete = new task\delete_course();
+        $taskdelete->set_custom_data(['courseid' => $event->objectid]);
+        \core\task\manager::queue_adhoc_task($taskdelete);
+    }
+
+    public static function user_deleted(user_deleted $event) {
+        $taskdelete = new task\delete_user();
+        $taskdelete->set_custom_data(['username' => $event->other['username']]);
+        \core\task\manager::queue_adhoc_task($taskdelete);
+    }
+}
+

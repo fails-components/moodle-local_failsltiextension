@@ -15,17 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Communication with the FAILS Server API
- *
  * @package   local_failsltiextension
  * @copyright 2023 Daniil Fajnberg, innoCampus, TU Berlin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023020200;
-$plugin->requires  = 2019111800;
-$plugin->component = 'local_failsltiextension';
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.1.0';
+$observers = [
+    [
+        'eventname'   => '\core\event\course_deleted',
+        'callback'    => 'local_failsltiextension\observer\delete_observer::course_deleted',
+        'internal'    => false,
+    ],
+    [
+        'eventname'   => '\core\event\user_deleted',
+        'callback'    => 'local_failsltiextension\observer\delete_observer::user_deleted',
+        'internal'    => false,
+    ],
+];
