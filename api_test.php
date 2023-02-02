@@ -41,8 +41,9 @@ $PAGE->set_title($title);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
+// Try to delete course with impossible ID;
+// the response should say that 0 documents were affected.
 $api = new api();
-
 try {
     $data = $api->delete_course(-1);
     if ($data == ['modifieddocs' => 0]) {
