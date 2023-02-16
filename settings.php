@@ -51,7 +51,7 @@ if ($hassiteconfig) {
     );
     $settings->add(
         new admin_setting_configtext(
-            'failsltiextension/api_url',
+            'local_failsltiextension/api_url',
             get_string('settings_api_url', 'local_failsltiextension'),
             '',
             '',
