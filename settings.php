@@ -33,9 +33,9 @@ if ($hassiteconfig) {
     $settings->add(
         new admin_setting_heading(
             'links',
-            "Links",
+            get_string('settings:linksheading', 'local_failsltiextension'),
             get_string(
-                'api_test:link',
+                'apitest:linktext',
                 'local_failsltiextension',
                 ['link' => (string) new moodle_url('/local/failsltiextension/api_test.php')]
             )
@@ -45,14 +45,14 @@ if ($hassiteconfig) {
     $settings->add(
         new admin_setting_heading(
             'settings',
-            get_string('settings_heading', 'local_failsltiextension'),
+            get_string('settings:heading', 'local_failsltiextension'),
             ''
         )
     );
     $settings->add(
         new admin_setting_configtext(
             'local_failsltiextension/api_url',
-            get_string('settings_api_url', 'local_failsltiextension'),
+            get_string('settings:apiurl', 'local_failsltiextension'),
             '',
             '',
             PARAM_URL

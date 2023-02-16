@@ -34,7 +34,7 @@ require_capability('moodle/site:config', $context);
 // Set up page.
 $PAGE->set_context($context);
 $PAGE->set_url('/local/failsltiextension/api_test.php');
-$title = get_string('api_test:title', 'local_failsltiextension');
+$title = get_string('apitest:title', 'local_failsltiextension');
 $PAGE->set_title($title);
 
 // Start output.
@@ -48,16 +48,16 @@ try {
     $data = $api->delete_course(-1);
     if ($data == ['modifieddocs' => 0]) {
         \core\notification::success(
-            get_string('api_test:success', 'local_failsltiextension')
+            get_string('apitest:success', 'local_failsltiextension')
         );
     } else {
         \core\notification::warning(
-            get_string('api_test:unexpected', 'local_failsltiextension')
+            get_string('apitest:unexpected', 'local_failsltiextension')
         );
     }
 } catch (api_request_exception $th) {
     \core\notification::error(
-        get_string('api_test:error', 'local_failsltiextension', $th->statuscode)
+        get_string('apitest:error', 'local_failsltiextension', $th->statuscode)
     );
 }
 

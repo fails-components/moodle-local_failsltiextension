@@ -30,7 +30,7 @@ class api_request_exception extends \moodle_exception {
     public $statuscode;
 
     public function __construct($statuscode) {
-        parent::__construct('api_request_exception', 'local_failsltiextension', '', $statuscode);
+        parent::__construct('apirequestexception', 'local_failsltiextension', '', $statuscode);
         $this->statuscode = $statuscode;
     }
 }
@@ -46,19 +46,19 @@ class api_request_exception extends \moodle_exception {
 class api {
 
     /** @var string */
-    private $base_url;
+    private $baseurl;
 
 
     /**
      * Removes trailing slashes from the base URL.
      *
-     * @param ?string $base_url If `null` (default), the config value `api_url` is used
+     * @param ?string $baseurl If `null` (default), the config value `api_url` is used
      */
-    public function __construct(?string $base_url = null) {
-        if (is_null($base_url)) {
-            $base_url = get_config('failsltiextension', 'api_url');
+    public function __construct(?string $baseurl = null) {
+        if (is_null($baseurl)) {
+            $baseurl = get_config('failsltiextension', 'api_url');
         }
-        $this->base_url = preg_replace('|/+$|i', '', $base_url);
+        $this->baseurl = preg_replace('|/+$|i', '', $baseurl);
     }
 
 
@@ -95,7 +95,7 @@ class api {
         array $payload = [],
         array $headers = []
     ) : array {
-        $url = $this->base_url . $path;
+        $url = $this->baseurl . $path;
         if ($auth) {
             $headers[] = "Authorization: Bearer " . $this->get_jwt();
         }
