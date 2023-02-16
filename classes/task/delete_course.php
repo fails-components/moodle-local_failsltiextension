@@ -25,7 +25,6 @@ namespace local_failsltiextension\task;
 use core\task\adhoc_task;
 
 use local_failsltiextension\api;
-use local_failsltiextension\api_request_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,12 +38,7 @@ class delete_course extends adhoc_task {
         $courseid = $this->get_custom_data()->courseid;
         mtrace("Requesting deletion of course with ID {$courseid} in the FAILS backend.");
         $api = new api();
-        try {
-            list('modifieddocs' => $modifieddocs) = $api->delete_course($courseid);
-        } catch (api_request_exception $th) {
-            // PLACEHOLDER
-            throw $th;
-        }
+        list('modifieddocs' => $modifieddocs) = $api->delete_course($courseid);
         mtrace("Course deletion for ID {$courseid} modified {$modifieddocs} document(s).");
     }
 }

@@ -53,15 +53,10 @@ class delete_user extends adhoc_task {
                 throw $th;
             }
         }
-        try {
-            list(
-                'deletedusers' => $deletedusers,
-                'modifieddocs' => $modifieddocs
-            ) = $api->delete_user($uuid);
-        } catch (api_request_exception $th) {
-            // PLACEHOLDER
-            throw $th;
-        }
+        list(
+            'deletedusers' => $deletedusers,
+            'modifieddocs' => $modifieddocs
+        ) = $api->delete_user($uuid);
         if ($deletedusers == 0) {
             $msg = "User {$userid} ({$uuid}) was not deleted";
         } elseif ($deletedusers == 1) {
