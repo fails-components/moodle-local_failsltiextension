@@ -154,20 +154,13 @@ class api {
     /**
      * Requests a user's UUID from the FAILS backend.
      *
-     * @param ?string $username the name of the user for which to get the UUID
-     * @param ?string $email the email address of the user for which to get the UUID
+     * @param string $userid the ID of the user for which to get the UUID
      * @return array with one key `uuid`
      * @throws api_request_exception with the HTTP status code if it is not 200
      */
-    public function get_user_uuid(?string $username = null, ?string $email = null) : array {
+    public function get_user_uuid(string $userid) : array {
         $path = '/lti/maintenance/user/';
-        $payload = [];
-        if (!is_null($username)) {
-            $payload['username'] = $username;
-        }
-        if (!is_null($email)) {
-            $payload['email'] = $email;
-        }
+        $payload = ['lmssub' => $userid];
         list($status, $data) = $this->get($path, true, $payload);
         if ($status != 200) {
             throw new api_request_exception($status);

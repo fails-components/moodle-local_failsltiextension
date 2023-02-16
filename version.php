@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023020200;
+$plugin->version   = 2023021600;
 $plugin->requires  = 2019111800;
 $plugin->component = 'local_failsltiextension';
 $plugin->maturity  = MATURITY_BETA;

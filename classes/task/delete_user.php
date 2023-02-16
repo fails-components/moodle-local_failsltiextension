@@ -36,18 +36,18 @@ class delete_user extends adhoc_task {
      * @throws \Exception
      */
     public function execute() {
-        $username = $this->get_custom_data()->username;
-        mtrace("Requesting deletion of user `{$username}` in the FAILS backend.");
+        $userid = $this->get_custom_data()->userid;
+        mtrace("Requesting deletion of user {$userid} in the FAILS backend.");
         $api = new api();
         try {
-            $uuid = $api->get_user_uuid($username)['uuid'];
+            $uuid = $api->get_user_uuid($userid)['uuid'];
         }
         catch (api_request_exception $th) {
             if ($th->statuscode == 404) {
                 // This is fine and will happen most of the time
                 // because most users likely never used the tool
                 // and thus have no entry for them in the DB.
-                mtrace("Username `{$username}` not found in the FAILS backend.");
+                mtrace("User {$userid} not found in the FAILS backend.");
                 return;
             } else {
                 throw $th;
@@ -63,9 +63,9 @@ class delete_user extends adhoc_task {
             throw $th;
         }
         if ($deletedusers == 0) {
-            $msg = "User `{$username}` ({$uuid}) was not deleted";
+            $msg = "User {$userid} ({$uuid}) was not deleted";
         } elseif ($deletedusers == 1) {
-            $msg = "User `{$username}` ({$uuid}) was successfully deleted";
+            $msg = "User {$userid} ({$uuid}) was successfully deleted";
         } else {
             $msg = "Unexpectedly, {$deletedusers} users were deleted";
         }
