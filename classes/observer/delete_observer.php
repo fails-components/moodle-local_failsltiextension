@@ -41,7 +41,7 @@ class delete_observer {
 
     public static function user_deleted(user_deleted $event) {
         $taskdelete = new task\delete_user();
-        $taskdelete->set_custom_data(['userid' => $event->userid]);
+        $taskdelete->set_custom_data(['userid' => $event->objectid]);
         \core\task\manager::queue_adhoc_task($taskdelete);
     }
 }
