@@ -56,7 +56,7 @@ class api {
      */
     public function __construct(?string $baseurl = null) {
         if (is_null($baseurl)) {
-            $baseurl = get_config('failsltiextension', 'api_url');
+            $baseurl = get_config('local_failsltiextension', 'api_url');
         }
         $this->baseurl = preg_replace('|/+$|i', '', $baseurl);
     }
